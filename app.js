@@ -6,9 +6,9 @@
   "use strict";
 
   const REGIONS = [
-    { key: "General",   label: "General",         forced: true,  note: "always on" },
-    { key: "Varlamore", label: "Varlamore",       forced: true,  note: "starter region" },
-    { key: "Karamja",   label: "Karamja",         forced: true,  note: "auto-unlock @ 80 tasks" },
+    { key: "General",   label: "General",         defaultOn: true,  note: "always accessible" },
+    { key: "Varlamore", label: "Varlamore",       defaultOn: true,  note: "starter region" },
+    { key: "Karamja",   label: "Karamja",         defaultOn: true,  note: "free @ 80 tasks" },
     { key: "Asgarnia",  label: "Asgarnia" },
     { key: "Kourend",   label: "Kourend & Kebos" },
     { key: "Desert",    label: "Kharidian Desert" },
@@ -229,52 +229,113 @@
     });
   }
 
-  /** ---------- clustering & ordering ---------- */
-  /**
-   * Group tasks by region, then by sub-location label (the LocLine `location`
-   * string we resolved). Within a cluster, sort by tier then name.
-   * Across clusters, sort by cluster centroid to reduce travel distance.
+  /** ---------- clustering & ordering ----------
+   * Pipeline per region:
+   *   1. Group tasks by LocLine label to form initial clusters.
+   *   2. Merge any two clusters whose centroids are within MERGE_THRESHOLD
+   *      tiles — fixes the case where the wiki gives two nearly-identical
+   *      labels for the same spot (e.g. "Falador east bank" vs "East bank").
+   *   3. Greedy nearest-neighbour ordering of clusters, starting from the
+   *      region's main bank/centre.
+   *   4. Within each cluster, sort tasks by distance from the entry tile
+   *      we walked in from, not alphabetical — so the plugin's waypoint
+   *      arrow walks you through the cluster in a sensible order.
+   *   5. Chebyshev (king-move) distance everywhere, since OSRS tiles treat
+   *      diagonals and orthogonals as equal steps.
    */
+  const MERGE_THRESHOLD = 20;     // tiles between cluster centroids to merge
+
+  function cheb(a, b) {
+    return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+  }
+
+  function centroid(items) {
+    const n = items.length || 1;
+    return {
+      cx: items.reduce((a, e) => a + e.coord.x, 0) / n,
+      cy: items.reduce((a, e) => a + e.coord.y, 0) / n,
+    };
+  }
+
+  function mergeNearbyClusters(clusters, threshold) {
+    let changed = true;
+    while (changed) {
+      changed = false;
+      outer: for (let i = 0; i < clusters.length; i++) {
+        for (let j = i + 1; j < clusters.length; j++) {
+          const a = clusters[i], b = clusters[j];
+          // Don't merge across planes - different z means ladder/stairs.
+          const planeA = a.items[0].coord.plane, planeB = b.items[0].coord.plane;
+          if (planeA !== planeB) continue;
+          const d = cheb({ x: a.cx, y: a.cy }, { x: b.cx, y: b.cy });
+          if (d > threshold) continue;
+          // Keep the label of whichever cluster has more items (it's the anchor).
+          const primary = a.items.length >= b.items.length ? a : b;
+          const merged = { label: primary.label, items: a.items.concat(b.items), plane: planeA };
+          const c = centroid(merged.items);
+          merged.cx = c.cx; merged.cy = c.cy;
+          clusters.splice(j, 1);
+          clusters[i] = merged;
+          changed = true;
+          break outer;
+        }
+      }
+    }
+    return clusters;
+  }
+
   function clusterTasks(tasks, selectedRegions) {
     const withCoords = tasks.map((t) => ({ task: t, coord: resolveCoord(t, selectedRegions) }));
 
-    const skip = [];
+    const skipped = [];
     const kept = [];
-    for (const entry of withCoords) {
-      if (!entry.coord) skip.push(entry);
-      else kept.push(entry);
-    }
+    for (const e of withCoords) (e.coord ? kept : skipped).push(e);
 
-    // group by region → sub-label
+    // Bucket by region
     const byRegion = new Map();
     for (const e of kept) {
-      const r = e.task.region;
-      if (!byRegion.has(r)) byRegion.set(r, new Map());
-      const subMap = byRegion.get(r);
-      const sub = e.coord.label || "(misc)";
-      if (!subMap.has(sub)) subMap.set(sub, []);
-      subMap.get(sub).push(e);
+      if (!byRegion.has(e.task.region)) byRegion.set(e.task.region, []);
+      byRegion.get(e.task.region).push(e);
     }
 
-    // order regions: General, then user-selected in REGIONS order
     const orderedRegions = REGIONS.map((r) => r.key).filter((k) => byRegion.has(k));
     const sections = [];
+
     for (const region of orderedRegions) {
-      const subMap = byRegion.get(region);
-      // inside a region: nearest-neighbour by centroid starting at region centre
-      const start = state.regionCenters[region] || { x: 3200, y: 3200 };
-      const clusters = Array.from(subMap.entries()).map(([label, items]) => {
-        const cx = items.reduce((a, e) => a + e.coord.x, 0) / items.length;
-        const cy = items.reduce((a, e) => a + e.coord.y, 0) / items.length;
-        return { label, items, cx, cy };
-      });
+      const regionTasks = byRegion.get(region);
+
+      // Step 1: initial clusters by label
+      const byLabel = new Map();
+      for (const e of regionTasks) {
+        const lbl = e.coord.label || "(misc)";
+        if (!byLabel.has(lbl)) byLabel.set(lbl, []);
+        byLabel.get(lbl).push(e);
+      }
+      let clusters = Array.from(byLabel.entries()).map(([label, items]) => ({
+        label, items, ...centroid(items), plane: items[0].coord.plane,
+      }));
+
+      // Step 2: merge close clusters
+      clusters = mergeNearbyClusters(clusters, MERGE_THRESHOLD);
+
+      // Step 3: nearest-neighbour ordering, starting at region centre
+      const regionCentre = state.regionCenters[region];
+      let cur = regionCentre ? { x: regionCentre.x, y: regionCentre.y }
+                              : { x: clusters[0].cx, y: clusters[0].cy };
       const ordered = [];
-      let cur = start;
       const pool = clusters.slice();
       while (pool.length) {
-        pool.sort((a, b) => dist(cur, a) - dist(cur, b));
+        pool.sort((a, b) =>
+          cheb(cur, { x: a.cx, y: a.cy }) - cheb(cur, { x: b.cx, y: b.cy })
+        );
         const next = pool.shift();
+        // Step 4: sort tasks inside the cluster by distance from where we came in
+        const entry = cur;
         next.items.sort((a, b) => {
+          const da = cheb(entry, a.coord);
+          const db = cheb(entry, b.coord);
+          if (da !== db) return da - db;
+          // Tiebreak: tier then name so training progression stays sensible
           const t = (TIER_ORDER[a.task.tier] ?? 9) - (TIER_ORDER[b.task.tier] ?? 9);
           return t !== 0 ? t : a.task.name.localeCompare(b.task.name);
         });
@@ -284,13 +345,7 @@
       sections.push({ region, clusters: ordered });
     }
 
-    return { sections, skipped: skip };
-  }
-
-  function dist(a, b) {
-    const dx = a.x - (b.cx ?? b.x);
-    const dy = a.y - (b.cy ?? b.y);
-    return Math.sqrt(dx * dx + dy * dy);
+    return { sections, skipped };
   }
 
   /** ---------- output ---------- */
@@ -359,13 +414,13 @@
     for (const r of REGIONS) {
       const id = "reg_" + r.key;
       const wrap = document.createElement("label");
-      if (r.forced) wrap.classList.add("forced");
+      if (r.defaultOn) wrap.classList.add("forced");
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.id = id;
       cb.value = r.key;
-      cb.checked = !!r.forced;
-      cb.disabled = !!r.forced;
+      cb.checked = !!r.defaultOn;
+      // No longer disabled — user can uncheck any region for custom routes
       cb.dataset.region = r.key;
       const span = document.createElement("span");
       span.textContent = r.label + (r.note ? ` (${r.note})` : "");
