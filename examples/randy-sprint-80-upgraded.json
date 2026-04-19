@@ -1,0 +1,793 @@
+{
+  "id": "2li3eruwfws4b8g3s4",
+  "name": "Randy's 80 Task Region Unlock Sprint",
+  "taskType": "LEAGUE_6",
+  "sections": [
+    {
+      "id": "gld2thgchupzc49004",
+      "name": "Varlamore Cleanup Chain",
+      "items": [
+        {
+          "customItem": {
+            "id": "dqc2tdq1te7c4918th",
+            "label": "START: Teleport to Civitas illa Fortis",
+            "description": "Home tele or lodestone"
+          }
+        },
+        {
+          "customItem": {
+            "id": "r01n8brbm9e96ycqyd",
+            "label": "Bank prep: GP, chisel, hammer, gold bars, sapphire+emerald, amulet+ring mould, silver bars, tiara mould",
+            "description": "Fortis West bank"
+          },
+          "location": {
+            "x": 1648,
+            "y": 3117,
+            "plane": 0
+          }
+        },
+        {
+          "taskId": 14806,
+          "location": {
+            "x": 1660,
+            "y": 3091,
+            "plane": 0
+          },
+          "note": "Furnace - Fortis southern furnace"
+        },
+        {
+          "taskId": 14807,
+          "location": {
+            "x": 1660,
+            "y": 3091,
+            "plane": 0
+          },
+          "note": "Same furnace - batch it"
+        },
+        {
+          "taskId": 14800,
+          "location": {
+            "x": 1660,
+            "y": 3091,
+            "plane": 0
+          },
+          "note": "Same furnace - 20 silver bars + tiara mould"
+        },
+        {
+          "customItem": {
+            "id": "rz1g3pj554l61819r0",
+            "label": "Bank: grab bucket of milk + butter a potato (have raw potato)"
+          },
+          "location": {
+            "x": 1648,
+            "y": 3117,
+            "plane": 0
+          }
+        },
+        {
+          "taskId": 14443,
+          "location": {
+            "x": 1670,
+            "y": 3060,
+            "plane": 0
+          },
+          "note": "Ortus Farm dairy churn north of Fortis"
+        },
+        {
+          "taskId": 14442,
+          "location": {
+            "x": 1670,
+            "y": 3060,
+            "plane": 0
+          },
+          "note": "Use butter on any potato - have one on you"
+        },
+        {
+          "taskId": 14845,
+          "location": {
+            "x": 1672,
+            "y": 3056,
+            "plane": 0
+          },
+          "note": "Ortus Farm compost bin"
+        },
+        {
+          "taskId": 15155,
+          "location": {
+            "x": 1664,
+            "y": 3124,
+            "plane": 0
+          },
+          "note": "Fortis Bazaar urchin NPC"
+        },
+        {
+          "taskId": 15189,
+          "location": {
+            "x": 1624,
+            "y": 3166,
+            "plane": 0
+          },
+          "note": "Villa Lucens estate - Fortis NW"
+        },
+        {
+          "taskId": 15175,
+          "location": {
+            "x": 1624,
+            "y": 3166,
+            "plane": 0
+          },
+          "note": "Same spot, keep stealing"
+        },
+        {
+          "taskId": 15033,
+          "location": {
+            "x": 1624,
+            "y": 3166,
+            "plane": 0
+          },
+          "note": "Valuables loot roll - keep going until drop"
+        },
+        {
+          "taskId": 15171,
+          "location": {
+            "x": 1773,
+            "y": 3100,
+            "plane": 0
+          },
+          "note": "Knights wander Fortis centre \u00b7 [auto-match score 0.64 \u2014 verify]"
+        },
+        {
+          "customItem": {
+            "id": "2gpavsphwb7rvpab0r",
+            "label": "Bank - knife, logs, bird snare, box traps, butterfly net",
+            "description": "Fortis West or Hunter Guild bank"
+          },
+          "location": {
+            "x": 1648,
+            "y": 3117,
+            "plane": 0
+          }
+        },
+        {
+          "customItem": {
+            "id": "kt5ssv5bxuzf32j8bt",
+            "label": "Run to Hunter Guild",
+            "description": "West of Fortis"
+          },
+          "location": {
+            "x": 1559,
+            "y": 3050,
+            "plane": 0
+          }
+        },
+        {
+          "taskId": 15254,
+          "location": {
+            "x": 1436,
+            "y": 3131,
+            "plane": 0
+          },
+          "note": "Quetzacalli Gorge or Hunter Guild basement"
+        },
+        {
+          "taskId": 15276,
+          "location": {
+            "x": 1451,
+            "y": 2999,
+            "plane": 0
+          },
+          "note": "Knife + logs. Tal Teklan or Hosidius"
+        },
+        {
+          "taskId": 15350,
+          "location": {
+            "x": 1560,
+            "y": 3054,
+            "plane": 0
+          },
+          "note": "Gilman/Cervus/Ornus at Hunter Guild"
+        },
+        {
+          "taskId": 15293,
+          "note": "Keep going from single"
+        },
+        {
+          "taskId": 15325,
+          "note": "Keep going from 10"
+        },
+        {
+          "taskId": 15025,
+          "note": "Rumour reward track"
+        },
+        {
+          "taskId": 15358,
+          "location": {
+            "x": 1560,
+            "y": 3054,
+            "plane": 0
+          },
+          "note": "Willow logs + Pitri after 10 rumours"
+        },
+        {
+          "taskId": 15318,
+          "location": {
+            "x": 1624,
+            "y": 2959,
+            "plane": 0
+          },
+          "note": "Wyrmtongue Harbour south of Hunter Guild \u00b7 [auto-match score 0.62 \u2014 verify]"
+        },
+        {
+          "taskId": 14620,
+          "location": {
+            "x": 1601,
+            "y": 2947,
+            "plane": 0
+          },
+          "note": "Pick up bones during agility laps \u00b7 [auto-match score 0.53 \u2014 verify]"
+        },
+        {
+          "taskId": 14622,
+          "location": {
+            "x": 1586,
+            "y": 3009,
+            "plane": 0
+          },
+          "note": "Small cave south of guild on cliff"
+        },
+        {
+          "taskId": 14284,
+          "location": {
+            "x": 2430,
+            "y": 4450,
+            "plane": 0
+          },
+          "note": "Fairy ring BJR to wheat field, spawn-camp baby"
+        }
+      ]
+    },
+    {
+      "id": "8b88owkba0iskaoq8s",
+      "name": "Karamja Sprint",
+      "items": [
+        {
+          "customItem": {
+            "id": "8o4sa7yupa5bd1kmjq",
+            "label": "Region Teleport to Karamja"
+          }
+        },
+        {
+          "taskId": 15190,
+          "location": {
+            "x": 2909,
+            "y": 3040,
+            "plane": 0
+          },
+          "note": "Tai Bwo Wannai lake - small fishing net"
+        },
+        {
+          "taskId": 15141,
+          "location": {
+            "x": 2876,
+            "y": 2979,
+            "plane": 0
+          },
+          "note": "Stepping stones"
+        },
+        {
+          "customItem": {
+            "id": "6qblradug7eldnawed",
+            "label": "Bank Shilo Village"
+          },
+          "location": {
+            "x": 2852,
+            "y": 2954,
+            "plane": 0
+          }
+        },
+        {
+          "taskId": 14766,
+          "location": {
+            "x": 2924,
+            "y": 3179,
+            "plane": 0
+          },
+          "note": "East Musa Point fishing spot"
+        },
+        {
+          "taskId": 14767,
+          "location": {
+            "x": 2852,
+            "y": 2950,
+            "plane": 0
+          },
+          "note": "Karamja river fly fishing"
+        },
+        {
+          "taskId": 14794,
+          "location": {
+            "x": 2852,
+            "y": 2950,
+            "plane": 0
+          },
+          "note": "Cook while fishing"
+        },
+        {
+          "taskId": 14796,
+          "note": "Same range session"
+        },
+        {
+          "customItem": {
+            "id": "3y4n0dhc4gqlkeprty",
+            "label": "Enter Mor Ul Rek",
+            "description": "Below Karamja volcano"
+          },
+          "location": {
+            "x": 2884,
+            "y": 3145,
+            "plane": 0
+          }
+        },
+        {
+          "taskId": 13739,
+          "location": {
+            "x": 2857,
+            "y": 5132,
+            "plane": 0
+          },
+          "note": "Any TzHaar-Ket in the city"
+        },
+        {
+          "taskId": 14087,
+          "location": {
+            "x": 2466,
+            "y": 5144,
+            "plane": 0
+          },
+          "note": "Yt'Haar-Mej-Kah shop ~90k tokkul"
+        },
+        {
+          "taskId": 14065,
+          "location": {
+            "x": 2478,
+            "y": 5148,
+            "plane": 0
+          },
+          "note": "Weapons shop ~375k tokkul"
+        },
+        {
+          "taskId": 15378,
+          "location": {
+            "x": 2793,
+            "y": 3064,
+            "plane": 0
+          },
+          "note": "Talk to Murcaily first"
+        }
+      ]
+    },
+    {
+      "id": "e848nsv97lav1c6dy2",
+      "name": "Asgarnia Sprint",
+      "items": [
+        {
+          "customItem": {
+            "id": "9ksdz87ae9701pw6qn",
+            "label": "Region Teleport to Asgarnia"
+          }
+        },
+        {
+          "taskId": 14476,
+          "location": {
+            "x": 2847,
+            "y": 3544,
+            "plane": 0
+          },
+          "note": "Warriors Guild upstairs - 183 att+str \u2713"
+        },
+        {
+          "taskId": 14849,
+          "location": {
+            "x": 2985,
+            "y": 3292,
+            "plane": 0
+          },
+          "note": "Air Altar NW of Falador, air talisman"
+        },
+        {
+          "taskId": 14470,
+          "location": {
+            "x": 2964,
+            "y": 3379,
+            "plane": 0
+          },
+          "note": "Wanders Falador - park/squares \u00b7 [auto-match score 0.71 \u2014 verify]"
+        },
+        {
+          "taskId": 14473,
+          "location": {
+            "x": 2666,
+            "y": 3370,
+            "plane": 0
+          },
+          "note": "Upstairs chest, deposit any item"
+        },
+        {
+          "taskId": 15343,
+          "location": {
+            "x": 3036,
+            "y": 3340,
+            "plane": 0
+          },
+          "note": "South Falador rooftop start"
+        },
+        {
+          "taskId": 14480,
+          "location": {
+            "x": 3017,
+            "y": 3262,
+            "plane": 0
+          },
+          "note": "South of Falador near Port Sarim \u00b7 [auto-match score 0.70 \u2014 verify]"
+        },
+        {
+          "taskId": 13624,
+          "location": {
+            "x": 3014,
+            "y": 3185,
+            "plane": 0
+          },
+          "note": "Jail cells south Port Sarim"
+        },
+        {
+          "taskId": 13883,
+          "location": {
+            "x": 3017,
+            "y": 3518,
+            "plane": 0
+          },
+          "note": "Black Knights Fortress N of Falador"
+        },
+        {
+          "taskId": 13859,
+          "location": {
+            "x": 2988,
+            "y": 3377,
+            "plane": 0
+          },
+          "note": "Falador Park - spade on mound + light source"
+        },
+        {
+          "taskId": 14497,
+          "location": {
+            "x": 2884,
+            "y": 3396,
+            "plane": 0
+          },
+          "note": "Ladder west of Taverley"
+        },
+        {
+          "taskId": 13568,
+          "location": {
+            "x": 2874,
+            "y": 9780,
+            "plane": 0
+          },
+          "note": "Get dusty key from Zombie in dungeon first"
+        },
+        {
+          "taskId": 13854,
+          "location": {
+            "x": 2886,
+            "y": 9802,
+            "plane": 0
+          },
+          "note": "Behind unlocked gate"
+        },
+        {
+          "taskId": 13853,
+          "location": {
+            "x": 2822,
+            "y": 9836,
+            "plane": 0
+          },
+          "note": "Taverley Dungeon west side"
+        },
+        {
+          "taskId": 15126,
+          "location": {
+            "x": 2822,
+            "y": 3691,
+            "plane": 0
+          },
+          "note": "Top of Troll Stronghold herb patch"
+        },
+        {
+          "taskId": 15299,
+          "location": {
+            "x": 3057,
+            "y": 3378,
+            "plane": 0
+          },
+          "note": "Mine pay-dirt + wash at sieve"
+        }
+      ]
+    },
+    {
+      "id": "xfz1pyldjgwm1uvfun",
+      "name": "Kourend Sprint",
+      "items": [
+        {
+          "customItem": {
+            "id": "v9z3xjcudad9zqogsu",
+            "label": "Region Teleport to Kourend"
+          }
+        },
+        {
+          "taskId": 13894,
+          "location": {
+            "x": 1629,
+            "y": 3967,
+            "plane": 0
+          },
+          "note": "Bank Arceuus first, 4 bruma min \u00b7 [auto-match score 0.64 \u2014 verify]"
+        },
+        {
+          "taskId": 13915,
+          "note": "Keep going for 10/25/50 tasks \u00b7 [auto-match score 0.55 \u2014 verify]"
+        },
+        {
+          "taskId": 14923,
+          "location": {
+            "x": 1632,
+            "y": 3807,
+            "plane": 0
+          },
+          "note": "Villia/Biblia/Sam for requests"
+        },
+        {
+          "taskId": 13674,
+          "location": {
+            "x": 1665,
+            "y": 10045,
+            "plane": 0
+          },
+          "note": "Teleport to catacombs \u00b7 [auto-match score 0.57 \u2014 verify]"
+        },
+        {
+          "taskId": 13674,
+          "location": {
+            "x": 1649,
+            "y": 10049,
+            "plane": 0
+          },
+          "note": "Same run \u00b7 [auto-match score 0.57 \u2014 verify]"
+        },
+        {
+          "taskId": 13888,
+          "location": {
+            "x": 1678,
+            "y": 10053,
+            "plane": 0
+          },
+          "note": "Same run"
+        },
+        {
+          "taskId": 13645,
+          "location": {
+            "x": 1665,
+            "y": 10050,
+            "plane": 0
+          },
+          "note": "Catacombs centre, need 4 dark totems"
+        },
+        {
+          "taskId": 14524,
+          "location": {
+            "x": 1441,
+            "y": 3671,
+            "plane": 0
+          },
+          "note": "Shayzien - finish dialogue"
+        },
+        {
+          "taskId": 15160,
+          "location": {
+            "x": 1299,
+            "y": 3789,
+            "plane": 0
+          },
+          "note": "Mt Karuulm - anti-drag shield + ice gloves"
+        },
+        {
+          "taskId": 15219,
+          "location": {
+            "x": 1306,
+            "y": 3810,
+            "plane": 0
+          },
+          "note": "Same area"
+        },
+        {
+          "taskId": 15173,
+          "location": {
+            "x": 1591,
+            "y": 3491,
+            "plane": 0
+          },
+          "note": "Any egg"
+        },
+        {
+          "taskId": 15317,
+          "location": {
+            "x": 1778,
+            "y": 3546,
+            "plane": 0
+          },
+          "note": "Hosidius juniper trees"
+        },
+        {
+          "taskId": 14716,
+          "location": {
+            "x": 1306,
+            "y": 3553,
+            "plane": 0
+          },
+          "note": "Mount Quidamortem short quest"
+        },
+        {
+          "taskId": 14921,
+          "note": "Plant in any herb patch"
+        },
+        {
+          "taskId": 14776,
+          "location": {
+            "x": 1712,
+            "y": 3206,
+            "plane": 0
+          },
+          "note": "Fortis tree patch"
+        },
+        {
+          "taskId": 14916,
+          "location": {
+            "x": 1309,
+            "y": 3791,
+            "plane": 0
+          },
+          "note": "Dusuri's Star Shop Mt Karuulm"
+        }
+      ]
+    },
+    {
+      "id": "buidq8n7t6ds2w6jiv",
+      "name": "RNG / Opportunistic (during other sections)",
+      "items": [
+        {
+          "taskId": 14663,
+          "note": "From random events or Wintertodt drops"
+        },
+        {
+          "taskId": 14451
+        },
+        {
+          "taskId": 14449
+        },
+        {
+          "taskId": 14444
+        },
+        {
+          "taskId": 14450
+        },
+        {
+          "taskId": 14286,
+          "note": "Fires during woodcutting"
+        },
+        {
+          "taskId": 14289
+        },
+        {
+          "taskId": 14288
+        },
+        {
+          "taskId": 15371,
+          "note": "Ent seed from forestry + find Ent"
+        },
+        {
+          "taskId": 14228,
+          "note": "Beekeeper random event reward"
+        },
+        {
+          "taskId": 14230,
+          "note": "Mime random event reward"
+        },
+        {
+          "taskId": 14267,
+          "note": "Drop from monsters - save and complete"
+        },
+        {
+          "taskId": 14431,
+          "note": "RNG from hard casket"
+        },
+        {
+          "taskId": 14413,
+          "note": "Keep doing hards"
+        },
+        {
+          "taskId": 14418
+        },
+        {
+          "taskId": 14408
+        }
+      ]
+    },
+    {
+      "id": "qql5tze0fj50b7nqxs",
+      "name": "Quick Skill Wins (fit around main sprints)",
+      "items": [
+        {
+          "taskId": 14241,
+          "note": "Fletch or buy from Aldarin archer shop"
+        },
+        {
+          "taskId": 14246,
+          "location": {
+            "x": 2445,
+            "y": 4435,
+            "plane": 0
+          },
+          "note": "Chaeldar shop in Zanaris"
+        },
+        {
+          "taskId": 14227,
+          "location": {
+            "x": 2445,
+            "y": 4435,
+            "plane": 0
+          },
+          "note": "Chaeldar shop in Zanaris"
+        },
+        {
+          "taskId": 14215,
+          "note": "Craft from blue dhide or buy"
+        },
+        {
+          "taskId": 14220,
+          "note": "Craft or loot from red drags"
+        },
+        {
+          "taskId": 14221,
+          "note": "Varrock locked - buy from TzHaar smith or drop"
+        },
+        {
+          "taskId": 13615,
+          "note": "Knife on blue dragonhide"
+        },
+        {
+          "taskId": 14236,
+          "note": "Clue scroll reward drop"
+        },
+        {
+          "taskId": 13604,
+          "note": "Stack prayer gear - god book, holy wraps etc"
+        },
+        {
+          "taskId": 14773,
+          "note": "Hunter Guild range - SKIP if under 79 Hunter"
+        },
+        {
+          "taskId": 14862,
+          "note": "You're 58 - skip unless training"
+        },
+        {
+          "taskId": 14282,
+          "note": "Use firelighter on logs then burn"
+        },
+        {
+          "taskId": 14224,
+          "note": "Fletch magic longbow unstrung + string - need 80 fletch, skip if not trained"
+        }
+      ]
+    }
+  ]
+}
