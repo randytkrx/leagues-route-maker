@@ -34,6 +34,22 @@
     </div>
   </section>
 
+  <section class="step" id="step-skills">
+    <h2>2b. Your skill levels <span class="optional">(optional)</span></h2>
+    <p class="hint">
+      Enter your <em>current Leagues</em> levels. Saved in your browser only
+      (localStorage) — never uploaded. Leave blank for no skill filtering.
+      Combat-level reqs use this too.
+    </p>
+    <div class="skill-grid" id="skillGrid"></div>
+    <div class="row">
+      <span class="status">Combat level: <strong id="combatLevel">3</strong></span>
+      <button id="clearSkillsBtn" class="secondary">Clear all</button>
+      <button id="maxSkillsBtn" class="secondary" title="Set every skill to 99">Max</button>
+      <span id="skillsMeta" class="status"></span>
+    </div>
+  </section>
+
   <section class="step" id="step-filter">
     <h2>3. Tier &amp; tweaks</h2>
     <div class="filter-row">

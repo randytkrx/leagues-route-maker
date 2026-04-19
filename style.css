@@ -235,6 +235,44 @@ footer .small {
 
 footer a { color: var(--link); }
 
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 6px;
+}
+
+.skill-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+
+.skill-grid label span {
+  flex: 1;
+  color: var(--muted);
+}
+
+.skill-grid input[type="number"] {
+  width: 48px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.skill-grid input[type="number"]::-webkit-inner-spin-button,
+.skill-grid input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+
 @media (max-width: 600px) {
   header h1 { font-size: 22px; }
   .step { padding: 14px; }

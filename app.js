@@ -22,6 +22,14 @@
   const TIER_ORDER = { easy: 0, medium: 1, hard: 2, elite: 3, master: 4 };
   const TIER_POINTS = { easy: 10, medium: 30, hard: 80, elite: 200, master: 500 };
 
+  const SKILLS = [
+    "Attack", "Strength", "Defence", "Hitpoints", "Ranged", "Prayer", "Magic",
+    "Runecraft", "Construction", "Agility", "Herblore", "Thieving", "Crafting",
+    "Fletching", "Slayer", "Hunter", "Mining", "Smithing", "Fishing", "Cooking",
+    "Firemaking", "Woodcutting", "Farming",
+  ];
+  const SKILL_STORAGE_KEY = "lrm-skills-v1";
+
   /** state */
   const state = {
     tasks: [],          // loaded from data/tasks.json
@@ -30,10 +38,17 @@
     quests: {},         // loaded from data/quests.json (id -> name)
     regionCenters: {},  // overrides.__regionCenters
     completed: new Set(),
-    skills: {},         // { cooking: 50, ... } optional
+    manualSkills: {},   // from localStorage form, { attack: 75, ... }
+    pastedSkills: {},   // from any export that happened to include levels
     questsDone: new Set(), // numeric ids (strings) the user has FINISHED
+    skillsUpdatedAt: null,
     ready: false,
   };
+
+  /** Effective skills = pasted values override manual entry where present. */
+  function effectiveSkills() {
+    return { ...state.manualSkills, ...state.pastedSkills };
+  }
 
   /** ---------- utilities ---------- */
   const $  = (sel) => document.querySelector(sel);
@@ -85,6 +100,7 @@
       throw new Error("Not valid JSON. Double-check the paste.");
     }
 
+    // Skills/questsDone are populated inside the parsing below.
     const addId = (id) => {
       const n = typeof id === "string" ? parseInt(id, 10) : id;
       if (Number.isFinite(n)) completed.add(n);
@@ -489,7 +505,7 @@
     const status = $("#progressStatus");
     if (!raw) {
       state.completed = new Set();
-      state.skills = {};
+      state.pastedSkills = {};
       state.questsDone = new Set();
       setStatus(status, "cleared", "warn");
       return;
@@ -497,16 +513,17 @@
     try {
       const { completed, skills, questsDone } = parseProgress(raw);
       state.completed = completed;
-      state.skills = skills;
+      state.pastedSkills = skills;
       state.questsDone = questsDone || new Set();
       const bits = [`${completed.size} completed task${completed.size === 1 ? "" : "s"}`];
       bits.push(Object.keys(skills).length
-        ? `${Object.keys(skills).length} skills`
-        : "no skills");
+        ? `${Object.keys(skills).length} skills from paste`
+        : "no skills in paste (form values still apply)");
       bits.push(state.questsDone.size
         ? `${state.questsDone.size} quests finished`
         : "no quest data");
       setStatus(status, "loaded: " + bits.join(" · "), completed.size > 0 ? "good" : "warn");
+      renderSkills();   // refresh form to show merged values
     } catch (err) {
       setStatus(status, err.message, "bad");
     }
@@ -515,9 +532,115 @@
   function onClearProgress() {
     $("#progressInput").value = "";
     state.completed = new Set();
-    state.skills = {};
+    state.pastedSkills = {};
     state.questsDone = new Set();
     setStatus($("#progressStatus"), "", null);
+  }
+
+  /** ---------- skills form (localStorage-backed) ---------- */
+  function loadSkillsFromStorage() {
+    try {
+      const raw = localStorage.getItem(SKILL_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      state.manualSkills = parsed.levels || {};
+      state.skillsUpdatedAt = parsed.updatedAt || null;
+    } catch (e) {
+      // corrupt storage — reset silently
+      state.manualSkills = {};
+    }
+  }
+
+  let skillSaveTimer;
+  function saveSkillsDebounced() {
+    clearTimeout(skillSaveTimer);
+    skillSaveTimer = setTimeout(() => {
+      try {
+        state.skillsUpdatedAt = Date.now();
+        localStorage.setItem(SKILL_STORAGE_KEY, JSON.stringify({
+          levels: state.manualSkills,
+          updatedAt: state.skillsUpdatedAt,
+        }));
+        updateSkillsMeta();
+      } catch (e) { /* storage full or blocked — ignore */ }
+    }, 300);
+  }
+
+  function renderSkills() {
+    const grid = $("#skillGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    const merged = effectiveSkills();
+    for (const name of SKILLS) {
+      const key = lower(name);
+      const label = document.createElement("label");
+      const span = document.createElement("span");
+      span.textContent = name;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = name === "Hitpoints" ? 10 : 1;
+      input.max = 99;
+      input.placeholder = "—";
+      input.dataset.skill = key;
+      if (merged[key] != null) input.value = merged[key];
+      if (state.pastedSkills[key] != null) {
+        input.disabled = true;
+        input.title = "Set from your pasted export. Clear the paste to edit.";
+      }
+      input.addEventListener("input", onSkillChange);
+      label.appendChild(span);
+      label.appendChild(input);
+      grid.appendChild(label);
+    }
+    updateCombatDisplay();
+    updateSkillsMeta();
+  }
+
+  function onSkillChange(e) {
+    const key = e.target.dataset.skill;
+    const raw = e.target.value.trim();
+    if (raw === "") {
+      delete state.manualSkills[key];
+    } else {
+      const val = parseInt(raw, 10);
+      if (Number.isFinite(val) && val >= 1 && val <= 99) {
+        state.manualSkills[key] = val;
+      }
+    }
+    saveSkillsDebounced();
+    updateCombatDisplay();
+  }
+
+  function updateCombatDisplay() {
+    const el = $("#combatLevel");
+    if (!el) return;
+    const merged = effectiveSkills();
+    if (Object.keys(merged).length === 0) { el.textContent = "—"; return; }
+    el.textContent = combatLevel(merged);
+  }
+
+  function updateSkillsMeta() {
+    const el = $("#skillsMeta");
+    if (!el) return;
+    const count = Object.keys(effectiveSkills()).length;
+    if (count === 0) { el.textContent = "all skills empty · filter won't kick in"; return; }
+    const when = state.skillsUpdatedAt
+      ? new Date(state.skillsUpdatedAt).toLocaleString()
+      : null;
+    el.textContent = `${count} skill${count === 1 ? "" : "s"} set` + (when ? ` · saved ${when}` : "");
+  }
+
+  function onClearSkills() {
+    state.manualSkills = {};
+    try { localStorage.removeItem(SKILL_STORAGE_KEY); } catch (e) {}
+    state.skillsUpdatedAt = null;
+    renderSkills();
+  }
+
+  function onMaxSkills() {
+    for (const name of SKILLS) state.manualSkills[lower(name)] = 99;
+    saveSkillsDebounced();
+    renderSkills();
   }
 
   function onGenerate() {
@@ -543,7 +666,7 @@
     const chosenTasks = selectTasks({
       regions, tiers, pactOnly, respectLevels, respectQuests, search, minCompletionPct,
       completed: state.completed,
-      skills: state.skills,
+      skills: effectiveSkills(),
       questsDone: state.questsDone,
     });
 
@@ -612,11 +735,16 @@
   /** ---------- boot ---------- */
   function boot() {
     renderRegions();
+    loadSkillsFromStorage();
+    renderSkills();
+
     $("#loadProgressBtn").addEventListener("click", onLoadProgress);
     $("#clearProgressBtn").addEventListener("click", onClearProgress);
     $("#generateBtn").addEventListener("click", onGenerate);
     $("#copyBtn").addEventListener("click", onCopy);
     $("#downloadBtn").addEventListener("click", onDownload);
+    $("#clearSkillsBtn").addEventListener("click", onClearSkills);
+    $("#maxSkillsBtn").addEventListener("click", onMaxSkills);
 
     loadData()
       .then(() => setStatus($("#generateStatus"), `ready · ${state.tasks.length} tasks loaded`, "good"))
