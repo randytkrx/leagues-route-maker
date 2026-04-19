@@ -95,7 +95,14 @@
         for (const [k, v] of Object.entries(data.tasks)) {
           if (v === true || v === "FINISHED" || v === "COMPLETED" || v === "COMPLETE") addId(k);
           else if (v && typeof v === "object") {
-            if (v.completed === true || v.status === "FINISHED" || v.status === "COMPLETE") addId(v.id ?? k);
+            // The Tasks Tracker plugin stores `completed` as a unix-ms timestamp:
+            // 0 = not done, non-zero = done. `structId` is the canonical task id.
+            const doneByTimestamp = typeof v.completed === "number" && v.completed > 0;
+            const doneByBool = v.completed === true;
+            const doneByStatus = v.status === "FINISHED" || v.status === "COMPLETE";
+            if (doneByTimestamp || doneByBool || doneByStatus) {
+              addId(v.structId ?? v.id ?? k);
+            }
           }
         }
       }
@@ -393,11 +400,13 @@
       state.completed = completed;
       state.skills = skills;
       const skillCount = Object.keys(skills).length;
+      const skillBit = skillCount
+        ? ` · ${skillCount} skill levels detected`
+        : " · no skill levels in this export — 'respect skill requirements' will have no effect";
       setStatus(
         status,
-        `loaded ${completed.size} completed task${completed.size === 1 ? "" : "s"}` +
-          (skillCount ? ` · ${skillCount} skill levels detected` : ""),
-        "good"
+        `loaded ${completed.size} completed task${completed.size === 1 ? "" : "s"}${skillBit}`,
+        completed.size > 0 ? "good" : "warn"
       );
     } catch (err) {
       setStatus(status, err.message, "bad");
