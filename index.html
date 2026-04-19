@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leagues Route Maker</title>
+<meta name="description" content="Generate a Tasks Tracker route for OSRS Demonic Pacts League (Leagues 6). Paste your tracker export, pick your regions, export a region-clustered route with exact tile coordinates. All processing runs in your browser — nothing is uploaded." />
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header>
+  <h1>Leagues Route Maker</h1>
+  <p class="tag">Demonic Pacts League (Leagues 6) · region-clustered routes with exact tile coords · <strong>all in-browser</strong>, nothing leaves your machine</p>
+</header>
+
+<main>
+  <section class="step" id="step-regions">
+    <h2>1. Pick your unlocked regions</h2>
+    <p class="hint">Everyone starts with Varlamore. Karamja unlocks after 80 tasks. Pick the 3 extra regions you chose after that.</p>
+    <div class="region-grid" id="regionGrid"></div>
+  </section>
+
+  <section class="step" id="step-progress">
+    <h2>2. Paste your Tasks Tracker progress <span class="optional">(optional)</span></h2>
+    <p class="hint">
+      Open RuneLite → Tasks Tracker plugin → export your progress, then paste the JSON here.
+      Any task marked complete gets filtered out. If you skip this step, the route will include every task in your regions.
+    </p>
+    <textarea id="progressInput" placeholder='Paste your tracker JSON here, e.g. {"tasks":{"14662":{"completed":true,...}}}'></textarea>
+    <div class="row">
+      <button id="loadProgressBtn">Load progress</button>
+      <button id="clearProgressBtn" class="secondary">Clear</button>
+      <span id="progressStatus" class="status"></span>
+    </div>
+  </section>
+
+  <section class="step" id="step-filter">
+    <h2>3. Tier &amp; tweaks</h2>
+    <div class="filter-row">
+      <label><input type="checkbox" value="easy" checked /> Easy</label>
+      <label><input type="checkbox" value="medium" checked /> Medium</label>
+      <label><input type="checkbox" value="hard" checked /> Hard</label>
+      <label><input type="checkbox" value="elite" checked /> Elite</label>
+      <label><input type="checkbox" value="master" /> Master</label>
+    </div>
+    <div class="filter-row">
+      <label><input type="checkbox" id="pactOnly" /> Demonic Pact tasks only</label>
+      <label><input type="checkbox" id="skipNoCoords" /> Skip tasks with no tile coord</label>
+      <label><input type="checkbox" id="respectLevels" checked /> Respect skill requirements (paste progress to enable)</label>
+    </div>
+    <div class="row">
+      <label>Route name: <input type="text" id="routeName" value="Leagues Route Maker route" /></label>
+    </div>
+  </section>
+
+  <section class="step" id="step-generate">
+    <h2>4. Generate</h2>
+    <div class="row">
+      <button id="generateBtn" class="primary">Generate route</button>
+      <span id="generateStatus" class="status"></span>
+    </div>
+    <div id="summary" class="summary"></div>
+  </section>
+
+  <section class="step" id="step-output">
+    <h2>5. Copy &amp; import</h2>
+    <p class="hint">
+      Copy the JSON below, then in RuneLite: Tasks Tracker panel → <strong>Import from clipboard</strong>.
+      Tiles with <em>exact</em> coords show as a waypoint; <em>approx</em> entries still render but are labelled.
+    </p>
+    <div class="row">
+      <button id="copyBtn">Copy to clipboard</button>
+      <button id="downloadBtn" class="secondary">Download .json</button>
+    </div>
+    <textarea id="output" readonly placeholder="Output will appear here after you click Generate."></textarea>
+  </section>
+</main>
+
+<footer>
+  <p class="small">
+    Built as a static site — no backend, no analytics, no cookies.
+    Your pasted tracker JSON stays in your browser and is never uploaded.
+    Task data from the <a href="https://oldschool.runescape.wiki/w/Demonic_Pacts_League/Tasks" rel="noopener">OSRS Wiki</a>,
+    used under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="noopener">CC BY-NC-SA 3.0</a>.
+    Not affiliated with Jagex.
+  </p>
+</footer>
+
+<script src="./app.js"></script>
+</body>
+</html>

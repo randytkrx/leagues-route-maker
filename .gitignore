@@ -1,0 +1,53 @@
+# Secrets / env — there shouldn't be any but belt + braces
+.env
+.env.*
+*.key
+*.pem
+secrets/
+credentials/
+
+# Personal user data — never commit a real tracker export or generated route
+# These are for local testing only
+test-exports/
+test-routes/
+*.personal.json
+*-mytracker.json
+*-myroute.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-*
+
+# Node / tooling
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+.next/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python (for scraper)
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# Backups
+*.bak
+*.orig
+
+# Build byproducts from scraper (tasks.wiki is the source of truth, this is derived)
+data/unique_links.txt
