@@ -46,7 +46,14 @@
     <div class="filter-row">
       <label><input type="checkbox" id="pactOnly" /> Demonic Pact tasks only</label>
       <label><input type="checkbox" id="skipNoCoords" /> Skip tasks with no tile coord</label>
-      <label><input type="checkbox" id="respectLevels" checked /> Respect skill requirements (paste progress to enable)</label>
+      <label title="Requires skill levels in your pasted export. If missing, this is silently a no-op."><input type="checkbox" id="respectLevels" checked /> Respect skill requirements</label>
+      <label title="Uses quest state from your pasted export. If missing, this filter does nothing."><input type="checkbox" id="respectQuests" checked /> Hide tasks needing quests I haven't finished</label>
+    </div>
+    <div class="filter-row">
+      <label>Search: <input type="text" id="searchInput" placeholder="e.g. karambwan, falador, magic log" /></label>
+      <label title="Hide tasks completed by fewer than X% of players — cuts grindy/niche content. Leave blank for no filter.">
+        Min popularity: <input type="number" id="minPct" min="0" max="100" step="1" placeholder="any" style="width: 80px" /> %
+      </label>
     </div>
     <div class="row">
       <label>Route name: <input type="text" id="routeName" value="Leagues Route Maker route" /></label>

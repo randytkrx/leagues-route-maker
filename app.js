@@ -27,9 +27,11 @@
     tasks: [],          // loaded from data/tasks.json
     coords: {},         // loaded from data/coords.json
     overrides: {},      // loaded from data/overrides.json
+    quests: {},         // loaded from data/quests.json (id -> name)
     regionCenters: {},  // overrides.__regionCenters
     completed: new Set(),
     skills: {},         // { cooking: 50, ... } optional
+    questsDone: new Set(), // numeric ids (strings) the user has FINISHED
     ready: false,
   };
 
@@ -48,14 +50,16 @@
 
   /** ---------- data load ---------- */
   async function loadData() {
-    const [tasks, coords, overrides] = await Promise.all([
+    const [tasks, coords, overrides, quests] = await Promise.all([
       fetch("./data/tasks.json").then((r) => r.json()),
       fetch("./data/coords.json").then((r) => r.json()),
       fetch("./data/overrides.json").then((r) => r.json()),
+      fetch("./data/quests.json").then((r) => r.json()),
     ]);
     state.tasks = tasks;
     state.coords = coords;
     state.overrides = overrides;
+    state.quests = quests;
     state.regionCenters = overrides.__regionCenters || {};
     state.ready = true;
   }
@@ -73,6 +77,7 @@
   function parseProgress(raw) {
     const completed = new Set();
     const skills = {};
+    const questsDone = new Set();   // quest IDs (as strings) where status === "FINISHED"
     let data;
     try {
       data = JSON.parse(raw);
@@ -122,9 +127,15 @@
           if (Number.isFinite(v)) skills[lower(k)] = v;
         }
       }
+      // Quest state from the RuneLite config dump
+      if (data.quests && typeof data.quests === "object") {
+        for (const [qid, v] of Object.entries(data.quests)) {
+          if (v === "FINISHED" || v === true) questsDone.add(String(qid));
+        }
+      }
     }
 
-    return { completed, skills };
+    return { completed, skills, questsDone };
   }
 
   /** ---------- coord resolution ---------- */
@@ -209,10 +220,38 @@
   }
 
   /** ---------- filtering ---------- */
+  /** OSRS combat level formula — used when a task requires "Combat N". */
+  function combatLevel(s) {
+    const att = s.attack ?? 1, str = s.strength ?? 1, def = s.defence ?? 1;
+    const hp  = s.hitpoints ?? 10, pray = s.prayer ?? 1;
+    const rng = s.ranged ?? 1, mag = s.magic ?? 1;
+    const base = (def + hp + Math.floor(pray / 2)) / 4;
+    const melee = (13 / 40) * (att + str);
+    const range = (13 / 40) * Math.floor(rng * 1.5);
+    const mage  = (13 / 40) * Math.floor(mag * 1.5);
+    return Math.floor(base + Math.max(melee, range, mage));
+  }
+
   function skillsOk(task, skills, respectLevels) {
     if (!respectLevels || !task.skills || task.skills.length === 0) return true;
     if (!skills || Object.keys(skills).length === 0) return true;
-    return task.skills.every((req) => (skills[lower(req.skill)] || 1) >= req.level);
+    return task.skills.every((req) => {
+      if (lower(req.skill) === "combat") return combatLevel(skills) >= req.level;
+      return (skills[lower(req.skill)] || 1) >= req.level;
+    });
+  }
+
+  function questsOk(task, questsDone, respectQuests) {
+    if (!respectQuests || !task.questReqs || task.questReqs.length === 0) return true;
+    // If no quest data in the export, don't filter anything out
+    if (!questsDone || questsDone.size === 0) return true;
+    return task.questReqs.every((qid) => questsDone.has(String(qid)));
+  }
+
+  function nameMatches(task, needle) {
+    if (!needle) return true;
+    const hay = (task.name + " " + (task.description || "")).toLowerCase();
+    return hay.includes(needle.toLowerCase());
   }
 
   function selectTasks(opts) {
@@ -225,6 +264,10 @@
       if (opts.completed.has(t.id)) return false;
       if (opts.pactOnly && !t.pactTask) return false;
       if (!skillsOk(t, opts.skills, opts.respectLevels)) return false;
+      if (!questsOk(t, opts.questsDone, opts.respectQuests)) return false;
+      if (!nameMatches(t, opts.search)) return false;
+      if (opts.minCompletionPct != null && typeof t.completionPercent === "number"
+          && t.completionPercent < opts.minCompletionPct) return false;
       return true;
     });
   }
@@ -447,22 +490,23 @@
     if (!raw) {
       state.completed = new Set();
       state.skills = {};
+      state.questsDone = new Set();
       setStatus(status, "cleared", "warn");
       return;
     }
     try {
-      const { completed, skills } = parseProgress(raw);
+      const { completed, skills, questsDone } = parseProgress(raw);
       state.completed = completed;
       state.skills = skills;
-      const skillCount = Object.keys(skills).length;
-      const skillBit = skillCount
-        ? ` · ${skillCount} skill levels detected`
-        : " · no skill levels in this export — 'respect skill requirements' will have no effect";
-      setStatus(
-        status,
-        `loaded ${completed.size} completed task${completed.size === 1 ? "" : "s"}${skillBit}`,
-        completed.size > 0 ? "good" : "warn"
-      );
+      state.questsDone = questsDone || new Set();
+      const bits = [`${completed.size} completed task${completed.size === 1 ? "" : "s"}`];
+      bits.push(Object.keys(skills).length
+        ? `${Object.keys(skills).length} skills`
+        : "no skills");
+      bits.push(state.questsDone.size
+        ? `${state.questsDone.size} quests finished`
+        : "no quest data");
+      setStatus(status, "loaded: " + bits.join(" · "), completed.size > 0 ? "good" : "warn");
     } catch (err) {
       setStatus(status, err.message, "bad");
     }
@@ -472,6 +516,7 @@
     $("#progressInput").value = "";
     state.completed = new Set();
     state.skills = {};
+    state.questsDone = new Set();
     setStatus($("#progressStatus"), "", null);
   }
 
@@ -490,11 +535,16 @@
     const pactOnly = $("#pactOnly").checked;
     const skipNoCoords = $("#skipNoCoords").checked;
     const respectLevels = $("#respectLevels").checked;
+    const respectQuests = $("#respectQuests").checked;
+    const search = $("#searchInput").value.trim();
+    const minPctRaw = $("#minPct").value;
+    const minCompletionPct = minPctRaw === "" ? null : Number(minPctRaw);
 
     const chosenTasks = selectTasks({
-      regions, tiers, pactOnly, respectLevels,
+      regions, tiers, pactOnly, respectLevels, respectQuests, search, minCompletionPct,
       completed: state.completed,
       skills: state.skills,
+      questsDone: state.questsDone,
     });
 
     const clustered = clusterTasks(chosenTasks, new Set(regions));
