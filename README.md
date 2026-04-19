@@ -47,10 +47,13 @@ If the wiki updates mid-league:
 
 ```bash
 curl -sS "https://oldschool.runescape.wiki/w/Demonic_Pacts_League/Tasks?action=raw" > data/tasks.wiki
-python3 scripts/parse_tasks.py
+python3 scripts/parse_tasks.py          # wikitext -> tasks.json (ids = wiki sortId)
+python3 scripts/remap_ids.py            # remap to plugin dbRowId so auto-tracking works
 python3 scripts/scrape_coords.py        # ~1 min, batches 50 pages at a time
 node scripts/smoke_test.mjs              # quick sanity
 ```
+
+**Why remap?** The wiki's `{{DPLTaskRow|id=N}}` numbers are just sortIds (0-1591). The Tasks Tracker plugin expects the in-game struct ID (`dbRowId`, 6807-15403) to match and auto-tick tasks as you complete them. The plugin publishes the full mapping at `osrs-reldo/task-json-store/tasks/LEAGUE_6.min.json` — `remap_ids.py` pulls that and patches `tasks.json`.
 
 ## Improving coords
 
